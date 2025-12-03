@@ -1,0 +1,207 @@
+.pedido-item {
+    display: flex;
+    margin: 25px 0px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ajusteFlex {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+button.cancelarPedido {
+    border: none;
+    border-radius: 5px;
+    background-color: #d62882;
+    padding: 15px 20px;
+    color: #fff;
+}
+
+.ajustepage {
+    display: flex;
+    margin: 2vw auto;
+    width: 90%;
+    height: auto;
+}
+
+.asideUserpage {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: center;
+    height: 38vw;
+    justify-content: space-between;
+}
+
+.juntos {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    height: 15vw;
+    gap: 15px;
+}
+
+.fotoPerfilP {
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    gap: 20px;
+}
+
+.fotoPerfil {
+    width: 30% !important;
+}
+
+.mainUserpage {
+    width: 85%;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    height: auto;
+}
+
+.Forms {
+    width: 90%;
+}
+
+.FormsAtt {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.ajusteBlocoForm {
+    display: flex;
+    gap: 20px;
+}
+
+.form-bloco {
+    width: 45%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #F6EFF3;
+}
+
+.form-bloco h2 {
+    margin-bottom: 10px;
+}
+
+.form-bloco label {
+    display: block;
+    margin-top: 10px;
+}
+
+.form-bloco input {
+    width: 95%;
+    padding: 6px;
+    margin-top: 4px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.texto-login {
+    text-align: center;
+}
+
+.Infos {
+    background: #FEF1F8;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 5px;
+    width: 50%;
+}
+
+.Infos.active {
+    background-color: #FF69B4;
+}
+
+.compras,
+.historico,
+.favoritos {
+    width: 100%;
+    padding: 0 30px;
+}
+
+.compras h2,
+.historico h2,
+.favoritos h2,
+.Forms h2 {
+    text-align: center;
+}
+
+
+.subMenuCompras {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40%;
+}
+
+.btnCompras {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.btnCompras.ativo {
+    font-weight: bold;
+    text-decoration: underline;
+    font-size: 19px;
+}
+
+.form-bloco {
+    width: 90%;
+    background: #F6EFF3;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.form-bloco h3 {
+    margin-bottom: 15px;
+}
+
+.form-bloco label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.form-bloco input {
+    width: 95%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+}
+
+.btnSalvar {
+    margin-top: 20px;
+    background: #d62882;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 50%;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btnSalvar:hover {
+    background: #b81d6c;
+}
