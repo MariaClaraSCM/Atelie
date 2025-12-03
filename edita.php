@@ -39,6 +39,7 @@ $user_nivel = $_SESSION['user_nivel'] ?? 'guest';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
 </head>
 <body>
     <h1>Editar avaliacoes</h1>

@@ -18,13 +18,13 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
 ?>
 <header>
     <div class="ajustepicture">
-        <a href="/index.php">
+        <a href="index.php">
             <img src="./assets/header/logo.svg" alt="Logo">
         </a>
 
         <ul>
             <li><button onclick="window.location.href='index.php'">Home</button></li>
-            <li><button onclick="window.location.href='produtos.php'">Produtos</button></li>
+            <li><button onclick="window.location.href='produtosPedir.php'">Produtos</button></li>
             <li><button onclick="window.location.href='sobre.php'">Sobre</button></li>
             <li><button onclick="window.location.href='contato.php'">Contato</button></li>
         </ul>
@@ -138,7 +138,7 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
 <style>
     header {
         background: #f4d7f4;
-        padding: 10px 30px;
+        padding: 15px 30px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -164,6 +164,7 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
 
     .ajustepicture a img {
         width: 100%;
+        height: 35px;
     }
 
     nav ul,
@@ -184,6 +185,10 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
         border: none;
     }
 
+    .ajustepicture ul li button:hover {
+        color: #d62882;
+    }
+
     /* ===== AJUSTE DO BLOCO DIREITO ===== */
     .ajusteNav {
         display: flex;
@@ -194,7 +199,7 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
     /* ===== CAMPO DE BUSCA ===== */
     .procurar {
         background: #fff;
-        padding: 5px 10px;
+        padding: 10px 10px;
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -216,6 +221,11 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
     .userbox {
         display: flex;
         align-items: center;
+        gap: 8px;
+    }
+
+    .userbox a:hover, .userbox button:hover {
+        color: #FF69B4;
     }
 
     .ajusteuserbox {
@@ -243,8 +253,8 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
 
     /* Botão de cadastro com fundo escuro */
     .auth {
-        background: #000;
-        color: #fff;
+        background-color: #000;
+        color: #fff !important;
         padding: 8px 16px;
         border-radius: 8px;
     }

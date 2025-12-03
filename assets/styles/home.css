@@ -4,6 +4,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-family: "Inter";
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .hero {
@@ -81,7 +85,7 @@ p {
 .motives {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 25px;
     margin-top: 50px;
     padding: 20px;
 }
@@ -96,21 +100,24 @@ p {
 
 .motive-card .icon-margin {
     background-color: #FF69B4;
-    width: 18px;
-    height: 18px;
     padding: 15px;
     border-radius: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background: 100%; */
 }
 
 .icon-margin img {
-    width: 100%;
-    height: auto;
+    width: 18px;
+    height: 18px;
+    object-fit: cover;
 }
 
 .motive-card h2 {
     margin-top: 15px;
     margin-bottom: 10px;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 500;
 }
 
@@ -137,6 +144,7 @@ p {
     font-size: 1rem;
     text-align: center;
     font-size: clamp(14px, 2vw, 16px);
+    gap: 15px;
 }
 
 .product button {
@@ -261,7 +269,7 @@ button {
     }
 }
 
-button {
+.container-carrossel button {
     background-color: white;
     border-radius: 50px;
     padding: 8px;
@@ -271,9 +279,10 @@ button {
 
 .contato {
     width: 100%;
-    height: 260px;
-    background: url('../assets/home/section.png');
-    background-image: url('../assets/home/section.svg');
+    height: 240px;
+    margin: 0;
+    /* background: url('./assets/home/section.png'); */
+    background-image: url('../home/section.svg');
     display: flex;
     justify-content: center;
     align-items: center;
@@ -288,6 +297,7 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 20px;
 }
 
 .contato h2 {

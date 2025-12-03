@@ -14,9 +14,9 @@ $produtos = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     if (!empty($row["foto_produto"])) {
-        $row["foto"] = "images/users/" . $row["foto_produto"];
+        $row["foto"] = $row["foto_produto"];
     } else {
-        $row["foto"] = "images/users/default.png";
+        $row["foto"] = "https://abd.org.br/wp-content/uploads/2023/09/placeholder-284.png";
     }
 
     $produtos[] = $row;
@@ -40,9 +40,9 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./assets/styles/pedirProduto.css">
-
+    <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>Galeria de Produtos</title>
+    <title>Produtos</title>
 </head>
 
 <body>
@@ -99,7 +99,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                     data-id="<?= $p["id_produto"] ?>">
 
                     <img
-                        src="<?= $p['foto_produto'] ?>"
+                        src="<?= $p['foto'] ?>"
                         class="foto-produto"
                         alt="<?= $p['nm_produto'] ?>">
 
@@ -108,8 +108,8 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                         <p><?= $p["descricao"] ?></p>
 
                         <div class="ajusteCardProduto">
-                            <p><b>R$ <?= $p["preco"] ?></b></p>
                             <p><b>Categoria:</b> <?= $p["nm_categoria"] ?></p>
+                            <p><b>R$ <?= $p["preco"] ?></b></p>
                         </div>
                     </div>
 
@@ -130,17 +130,28 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
 
                 <div class="modal-esquerda">
                     <img id="modalFoto" src="" alt="Foto do produto">
+                    <!-- <canvas id="modalFoto" style="background: #0f0f0f"></canvas> pra testar o tamanho da imagem -->
                 </div>
 
                 <div class="modal-direita">
-                    <h2 id="modalNome"></h2>
-                    <h3>R$ <span id="modalPreco"></span></h3>
-
-                    <p id="modalDescricao"></p>
-
-                    <label>Quantidade:</label>
-                    <input type="number" id="modalQuantidade" min="1" value="1">
-
+                    <div>
+                        <br>
+                        <h2 id="modalNome"></h2>
+                        <p id="modalDescricao"></p>
+                    </div>
+                        
+                    <!-- <input type="number" id="modalQuantidade" min="1" value="1"> -->
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label>Quantidade:</label>
+                        <div class="number-wrapper">
+                            <button class="btn-number" data-type="minus"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" id="modalQuantidade" min="1" value="1">
+                            <button class="btn-number" data-type="plus"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    
+                    <p>Valor unitário: <span id="modalPreco"></span></p>
+                    <p>Valor total: <span id="modalPrecoTotal"></span></p>
                     <div class="acoesModal">
                         <button id="btnPedirAgora" class="btnComprar">Pedir agora</button>
                         <button id="btnCarrinho" class="btnCarrinho">Adicionar ao carrinho</button>
@@ -192,20 +203,49 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
     <script>
         let produtoAtual = null;
 
+        function formatarReal(valor) {
+            return new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            }).format(valor);
+        }
         // ABRIR MODAL PRODUTO
         function abrirModalProduto(p) {
+            p.preco = Number(p.preco);
             produtoAtual = p;
 
-            document.getElementById("modalFoto").src = p.foto_produto;
+            document.getElementById("modalFoto").src = p.foto;
             document.getElementById("modalNome").textContent = p.nm_produto;
-            document.getElementById("modalPreco").textContent = p.preco;
+            document.getElementById("modalPreco").textContent = formatarReal(p.preco);
             document.getElementById("modalDescricao").textContent = p.descricao;
 
             const qtd = document.getElementById("modalQuantidade");
-            qtd.disabled = (p.tipo === "Pronta entrega");
+            qtd.value = 1;
 
+            document.getElementById("modalPrecoTotal").textContent = formatarReal(p.preco * Number(qtd.value));
+
+            qtd.disabled = (p.tipo === "Pronta entrega");
             document.getElementById("modalProduto").style.display = "flex";
         }
+
+        document.querySelectorAll(".btn-number").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const input = document.getElementById("modalQuantidade");
+                let current = parseInt(input.value) || 1;
+
+                if (btn.dataset.type === "plus") {
+                    current = current + 1;
+                } else {
+                    if (current > parseInt(input.min)) {
+                        current = current - 1;
+                    }
+                }
+
+                input.value = current;
+                const total = Number(produtoAtual.preco) * current;
+                document.getElementById("modalPrecoTotal").textContent = formatarReal(total);
+            });
+        });
 
         function fecharModalProduto() {
             document.getElementById("modalProduto").style.display = "none";
@@ -214,6 +254,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
         // BOTÃO PEDIR AGORA
         document.getElementById("btnPedirAgora").onclick = () => {
             if (produtoAtual.tipo === "Encomenda") {
+                fecharModalProduto();
                 document.getElementById("modalEncomenda").style.display = "flex";
             } else {
                 criarPedido("Pronta entrega");
@@ -260,6 +301,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
         async function confirmarEncomenda() {
             criarPedido("Encomenda");
         }
+
     </script>
 
 

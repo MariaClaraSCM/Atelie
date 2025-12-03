@@ -1,5 +1,4 @@
 <footer id="footer">
-
     <div class="conteudo-footer">
         <div class="ajustefooter">
 
@@ -76,8 +75,10 @@
 
     .ajustefooter {
         display: flex;
-        align-items: center;
+        align-items: start;
         justify-content: center;
+        gap: 30px;
+        padding: 15px;
     }
 
     .ajustefooter ul {

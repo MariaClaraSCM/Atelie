@@ -105,7 +105,7 @@
 section.gridProdutos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px 0px;
+    gap: 40px 10px;
     width: 80%;
     margin: auto;
 }
@@ -118,19 +118,20 @@ section.listaProdutosAdm {
 }
 
 .produtoAdm {
-    width: 80%;
+    width: 100%;
     border: 1px solid gray;
     border-radius: 5px;
     padding: 15px 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
 }
-
 
 .produtoAdm img {
     width: 100%;
-    height: 40vh;
+    height: 200px;
     object-fit: cover;
 }
 
@@ -184,8 +185,7 @@ img.fav {
 
 .modal-conteudo {
     background: #fff;
-    width: 750px;
-    padding: 25px;
+    padding: 35px;
     border-radius: 12px;
     display: flex;
     position: relative;
@@ -193,12 +193,16 @@ img.fav {
 }
 
 .modal-esquerda img {
+    width: 100%;
     width: 300px;
     border-radius: 10px;
 }
 
 .modal-direita {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    gap: 5px;
 }
 
 .modal-direita h2 {
@@ -246,4 +250,385 @@ img.fav {
     border: none;
     font-size: 22px;
     cursor: pointer;
+}
+
+/* estilizando os botões de quantidade + e - */
+
+input[type=number] {
+    position: relative;
+    /* padding-right: 24px; */
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.number-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#modalQuantidade {
+    display: flex;
+    width: 40px;
+    border: 0;
+    font-size: 16px;
+    text-align: center;
+}
+
+input[type=number]::after,
+input[type=number]::before {
+    content: "";
+    position: absolute;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+}
+
+input[type=number]::before {
+    top: 6px;
+}
+
+input[type=number]::after {
+    bottom: 6px;
+}
+
+#modalDescricao {
+    color: #2d2d2d;
+}
+
+.ativo{
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 50px;
+    background-color: #ccc;
+    font-weight: 600;
+}
+
+.ativo:hover {
+    background-color: #ff4f8b;
+    color: white;
+}
+
+/* overlay */
+#modalProduto {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+}
+
+/* conteúdo do modal */
+.modal-conteudo {
+    position: relative;
+    background: #fff;
+    width: 90%;
+    max-width: 780px;
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    gap: 24px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+}
+
+/* lado esquerdo */
+.modal-esquerda img, canvas {
+    width: 260px;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+/* lado direito */
+.modal-direita {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-direita h2 {
+    font-size: 22px;
+    margin: 0;
+}
+
+.modal-direita p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* quantidade */
+.number-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-number {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #f1f1f1;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-number:hover {
+    background: #e4e4e4;
+}
+
+#modalQuantidade {
+    width: 60px;
+    padding: 6px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.acoesModal {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btnComprar, .btnCarrinho {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.btnComprar {
+    background: #ff5fa2;
+    color: white;
+}
+
+.btnComprar:hover {
+    background: #ed4f91;
+}
+
+.btnCarrinho {
+    background: #2d2d2d;
+    color: white;
+}
+
+.btnCarrinho:hover {
+    background: #454545;
+}
+
+.btnFechar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #eee;
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btnFechar:hover {
+    background: #d9d9d9;
+}
+
+.gridProdutos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 22px;
+    padding: 20px 0;
+}
+
+.produtoAdm {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.10);
+    border: 1px solid #e5e5e5;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+}
+
+.produtoAdm:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+}
+
+.produtoAdm .foto-produto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.produtoAdm .info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.produtoAdm h2 {
+    font-size: 18px;
+    margin: 0;
+    color: #222;
+}
+
+.produtoAdm p {
+    margin: 0;
+    line-height: 1.4;
+    color: #555;
+}
+
+.ajusteCardProduto {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.ajusteCardProduto p b {
+    font-weight: 600;
+    color: #222;
+}
+
+.acoesAdm {
+    margin-top: auto;
+}
+
+#ordenacao {
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+#modalEncomenda {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#modalEncomenda .modal-conteudo {
+    background: #fff;
+    width: 420px;
+    padding: 24px 28px;
+    border-radius: 14px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+    animation: aparecer .25s ease;
+}
+
+#modalEncomenda h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+#modalEncomenda label {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#modalEncomenda input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+}
+
+#modalEncomenda input:focus {
+    border-color: #888;
+}
+
+#modalEncomenda .acoesModal {
+    margin-top: 8px;
+}
+
+#modalEncomenda .btnComprar {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #222;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#modalEncomenda .btnComprar:hover {
+    background: #000;
+}
+
+#modalEncomenda .btnFechar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: scale(.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 650px) {
+    .modal-conteudo {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-esquerda img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+
+    .acoesModal {
+        flex-direction: column;
+    }
 }

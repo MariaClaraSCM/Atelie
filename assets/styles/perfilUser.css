@@ -205,3 +205,9 @@ button.cancelarPedido {
 .btnSalvar:hover {
     background: #b81d6c;
 }
+
+
+.btnLogout {
+    padding: 10px;
+    background-color: #d62882;
+}

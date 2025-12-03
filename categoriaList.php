@@ -71,6 +71,7 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Categorias</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
 
     <!-- AJUSTE O CAMINHO DO CSS CONFORME ONDE ELE ESTIVER -->
     <link rel="stylesheet" href="assets/adm/dashboard.css">

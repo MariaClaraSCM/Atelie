@@ -107,6 +107,7 @@ $selectedSection = $_GET['section'] ?? 'conta';
     <title>Minha Conta</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./assets/styles/perfilUser.css">
+    <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
 
 </head>
 
@@ -153,7 +154,9 @@ $selectedSection = $_GET['section'] ?? 'conta';
                 </div>
 
                 <button onclick="window.location.href='logout.php'"
-                    class="btnLogout">
+                    class="btnLogout"
+                    style="padding: 7px 10px; background-color: #d62882; border: 0; border-radius: 6px; color: white;"
+                    >
                     Sair
                 </button>
 

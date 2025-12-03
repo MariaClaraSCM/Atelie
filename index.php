@@ -35,9 +35,9 @@ $testemonials = [
 <head>
   <meta charset="UTF-8" />
   <!-- Fav icon  -->
-  <link rel="icon" type="image/svg+xml" href="/imagotipo.svg" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Fontes do site: Inter, sans-serfic e Instrument Serif, serif -->
+  <!-- Fontes do site: Inter, sans-serif e Instrument Serif, serif -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,7 +62,7 @@ $testemonials = [
           Produzimos bolsas, lancheiras e muito mais — tudo personalizado para encantar
           e facilitar o dia a dia da sua família.
         </p>
-        <button class="hero-btn pronta-entrega" onclick="window.location.href='galeria.php'">Ver produtos</button>
+        <button class="hero-btn pronta-entrega" onclick="window.location.href='galeria.php'">Ver Galeria</button>
         <button class="hero-btn encomendar" onclick="window.location.href='produtosPedir.php'">Encomendar produto</button>
       </div>
     </section>
@@ -74,30 +74,29 @@ $testemonials = [
       <div class="motives">
         <div class="motive-card">
           <div class="icon-margin">
-            <img src="./assets//home/iconArtesanal.svg"
-              alt="Artesanal — peça feita à mão, representando cuidado artesanal">
+            <img src="./assets/home/iconArtesanal.svg"
+            alt="Artesanal — peça feita à mão, representando cuidado artesanal">
           </div>
-          <h2>Artesanal</h2>
-          <p>Cada peça do Ateliê Vó Egina é feita à mão, com atenção minuciosa aos detalhes.</p>
-        </div>
-        <div class="motive-card">
-          <div class="icon-margin">
-            <img src="./assets/home/iconBoaQualidade.svg"
-              alt="Boa Qualidade — durabilidade, beleza e acabamento impecável">
-          </div>
-          <h2>Boa Qualidade</h2>
-          <p>Garantimos durabilidade, beleza e acabamento impecável em todos os nossos produtos.</p>
-        </div>
-        <div class="motive-card">
-          <div class="icon-margin">
-            <img src="./assets/home/iconPensadoComAmor.svg"
-              alt="Pensado com Amor — peça única, criada com atenção às preferências do cliente">
-          </div>
-          <h2>Pensado com Amor</h2>
-          <p>
-            Aqui, cada peça é única. Egina ouve o cliente e transforma ideias em produtos
-            que aquecem o coração.
-          </p>
+              <h2>Artesanal</h2>
+              <p>Cada peça do Ateliê Vó Egina é feita à mão, com atenção minuciosa aos detalhes.</p>
+            </div>
+            <div class="motive-card">
+              <div class="icon-margin">
+                <img src="./assets/home/iconBoaQualidade.svg"
+                alt="Boa Qualidade — durabilidade, beleza e acabamento impecável">
+                </div>
+                <h2>Boa Qualidade</h2>
+                <p>Garantimos durabilidade, beleza e acabamento impecável em todos os nossos produtos.</p>
+                </div>
+                <div class="motive-card">
+                  <div class="icon-margin">
+                    <img src="./assets/home/iconPensadoComAmor.svg" alt="">
+                  </div>
+                <h2>Pensado com Amor</h2>
+                <p>
+                  Aqui, cada peça é única. Egina ouve o cliente e transforma ideias em produtos
+                  que aquecem o coração.
+                </p>
         </div>
       </div>
     </section>
@@ -245,7 +244,6 @@ $testemonials = [
       }
     });
   </script>
-
       <?php include 'footer.php'; ?>
 </body>
 

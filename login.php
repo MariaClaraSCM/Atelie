@@ -57,6 +57,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Fav icon  -->
+    <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fontes do site: Inter, sans-serif e Instrument Serif, serif -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- Ícones: Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Login - Ateliê</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -74,7 +84,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             <div class="col-md-6 col-lg-4">
                 
                 <div class="card shadow-lg p-4 custom-login-card">
-                    <h2 class="text-center mb-4 custom-heading">Faça login</h2>
+                    <h2 class="text-center mb-4 custom-heading">Faça Login</h2>
 
                     <?php if (isset($erro)): ?>
                         <div class="alert alert-danger text-center" role="alert">
@@ -89,9 +99,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
                             <input type="email" name="email" id="email" class="form-control" placeholder="seuemail@exemplo.com" required>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="senha" class="form-label">Senha</label>
-                            <input type="password" name="senha" id="senha" class="form-control" placeholder="Digite sua senha" required>
+                        <div class="mb-3" style="position: relative;">
+                            <label for="senha" class="form-label">Senha:</label>
+                            <input type="password" name="senha" id="senha" class="form-control" placeholder="Crie sua senha" required>
+
+                            <i id="toggleSenha" class="fa-solid fa-eye"
+                            onclick="verSenha('senha','toggleSenha')"
+                            style="position:absolute; right:12px; top:43px; cursor:pointer; color: #333;"></i>
                         </div>
                         
                         <div class="d-grid mt-4">
@@ -110,7 +124,40 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             </div>
         </div>
     </div>
+    <style>
+        body {
+            background-image: url('./assets/autenticacao/fundo.svg');
+        }
 
+        .btn {
+            background-color: #FF69B4;
+            border: none;
+        }
+
+        .btn:hover {
+            background-color: #d62882;
+        }
+
+        h2 {
+            font-family: "Instrument Serif", system-ui, sans-serif;
+        }
+    </style>
+    <script>
+        function verSenha(idInput, idIcon) {
+            const input = document.getElementById(idInput);
+            const icon = document.getElementById(idIcon);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

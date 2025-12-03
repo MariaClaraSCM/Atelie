@@ -17,7 +17,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     if (!empty($row["foto_produto"])) {
         $row["foto"] = $row["foto_produto"];
     } else {
-        $row["foto"] = "img/placeholder.png"; // caso não tenha foto
+        $row["foto"] = "https://abd.org.br/wp-content/uploads/2023/09/placeholder-284.png"; // caso não tenha foto
     }
 
     $produtos[] = $row;
