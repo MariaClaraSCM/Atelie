@@ -1,31 +1,58 @@
+
+
 <?php
 session_start();
 require 'config.php';
 
-// Verificar login
+
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     header('Location: login.php');
     exit;
 }
 
-// Verificar permissão de admin
 if ($_SESSION['tipo'] !== 'admin') {
     header('Location: index.php');
     exit;
 }
 
-// Dados do admin
-$nome_admin = $_SESSION['nm_usuario'];
-$foto_admin = $_SESSION['foto'] ?? "images/users/default.png";
+$id_admin = $_SESSION['id_usuario']; 
 
-// Contagens
+try {
+   
+    $stmt_admin = $pdo->prepare("SELECT nm_usuario, email, telefone, dt_nascimento, cpf, foto FROM usuario WHERE id_usuario = :id");
+    $stmt_admin->execute([':id' => $id_admin]);
+    $dados_admin = $stmt_admin->fetch(PDO::FETCH_ASSOC);
+
+    if ($dados_admin) {
+        // Aplicação de htmlspecialchars nas variáveis do admin
+        $nome_admin = htmlspecialchars($dados_admin['nm_usuario']);
+        $foto_admin = htmlspecialchars($dados_admin['foto'] ?? "images/users/default.png");
+        $email_admin = htmlspecialchars($dados_admin['email']);
+        $telefone_admin = htmlspecialchars($dados_admin['telefone']);
+        $cpf_admin = htmlspecialchars($dados_admin['cpf']);
+        $data_nascimento_admin = htmlspecialchars($dados_admin['dt_nascimento']); // Formato YYYY-MM-DD
+    } else {
+       
+        header('Location: logout.php');
+        exit;
+    }
+} catch (PDOException $e) {
+   //tratando erro
+    die("Erro ao carregar dados do administrador: " . $e->getMessage());
+}
+
+
+
+
+
+
 $total_avaliacoes = $pdo->query("SELECT COUNT(*) FROM avaliacao")->fetchColumn();
 $total_produtos   = $pdo->query("SELECT COUNT(*) FROM produto")->fetchColumn();
 $total_usuarios   = $pdo->query("SELECT COUNT(*) FROM usuario")->fetchColumn();
 $total_pedidos = $pdo->query("SELECT COUNT(*) FROM pedido")->fetchColumn();
 
 // Seção atual
-$secao = $_GET['secao'] ?? 'estatisticas';
+$secao = htmlspecialchars($_GET['secao'] ?? 'estatisticas'); 
 ?>
 
 <!DOCTYPE html>
@@ -34,15 +61,12 @@ $secao = $_GET['secao'] ?? 'estatisticas';
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Admin</title>
-    <!-- Fav icon  -->
     <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Fontes do site: Inter, sans-serif e Instrument Serif, serif -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <!-- Ícones: Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./assets/styles/dashboard.css">
@@ -53,7 +77,6 @@ $secao = $_GET['secao'] ?? 'estatisticas';
 
     <div class="admin-dashboard">
 
-        <!-- ========== SIDEBAR ============= -->
         <aside class="sidebar">
             <ul class="sidebar-menu">
 
@@ -79,17 +102,7 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                     <span class="links">Pedidos</span>
                 </li>
 
-                <!-- <li onclick="window.location='?secao=galeria'">
-                    <i class="fa-solid fa-image icon"></i>
-                    <span class="links">Galeria</span>
-                </li> -->
-
-                <!-- <li onclick="window.location='?secao=financeiro'">
-                    <i class="fa-solid fa-coins icon"></i>
-                    <span class="links">Financeiro</span>
-                </li> -->
-
-                <li onclick="window.location='?secao=clientes'">
+                <li onclick="window.location='users.php'">
                     <i class="fa-solid fa-users icon"></i>
                     <span class="links">Clientes</span>
                 </li>
@@ -103,14 +116,12 @@ $secao = $_GET['secao'] ?? 'estatisticas';
         </aside>
 
 
-        <!-- ========== CONTEÚDO PRINCIPAL ============= -->
         <main class="content">
 
-            <!-- HEADER -->
             <header class="header">
-                <h3>Bem-vinda, <?= htmlspecialchars($nome_admin) ?>!</h3>
+                <h3>Bem-vinda, <?= $nome_admin ?>!</h3> 
 
-                <div style="display: flex; gap: 25px; align-items:center">   
+                <div style="display: flex; gap: 25px; align-items:center">  
                 <button class="btn-novo" onclick="abrirCriarPedido()">
                     <i class="fa-solid fa-plus"></i>
                     Novo Pedido
@@ -120,10 +131,8 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 </div>
             </header>
 
-            <!-- ÁREA DOS CARDS / COMPONENTES -->
             <section class="cards-area">
 
-                <!-- ESTATÍSTICAS -->
                 <?php if ($secao === 'estatisticas'): ?>
                     <section class="dashboard-estatisticas">
 
@@ -132,7 +141,6 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                         <div class="card-item">
                             <h3>Avaliações</h3>
                             <p class="valor"><?= $total_avaliacoes ?></p> 
-                            <!-- TROCAR AQUI A PARTE DE AVALIAÇÕES? -->
                             <a href="avaliaadmin.php">Gerenciar</a>
                         </div>
                         
@@ -180,12 +188,9 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                             </div>
                             <div class="lista-pedidos">
                                 <div class="pedido">
-                                    <!-- <img id="foto-cliente" src="" alt=""> -->
-                                     <!-- uso o canvas pra testar o tamanho da foto quando não puxa, troque pela img -->
                                     <div style="display: flex; gap: 10px;">
                                         <canvas id="foto-cliente"></canvas>
                                         <div>
-                                            <!-- favor colocar margin 0 quando puxar os clientes em lista -->
                                             <p style="margin: 0;">Nome do produto</p>
                                             <span>Nome do cliente que pediu</span>
                                         </div>
@@ -195,12 +200,9 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                                     </div>
                                 </div>
                                 <div class="pedido">
-                                    <!-- <img id="foto-cliente" src="" alt=""> -->
-                                     <!-- uso o canvas pra testar o tamanho da foto quando não puxa, troque pela img -->
                                     <div style="display: flex; gap: 10px;">
                                         <canvas id="foto-cliente"></canvas>
                                         <div>
-                                            <!-- favor colocar margin 0 quando puxar os clientes em lista -->
                                             <p style="margin: 0;">Nome do produto</p>
                                             <span>Nome do cliente que pediu</span>
                                         </div>
@@ -215,7 +217,6 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 <?php endif; ?>
 
 
-                <!-- CATEGORIAS -->
                 <?php if ($secao === 'categorias'): ?>
                     <h2>Categorias</h2>
                     <button class="btn-novo addCategoria" onclick="window.location='categoria.php'">Adicionar Categoria</button>
@@ -223,7 +224,6 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 <?php endif; ?>
 
 
-                <!-- PRODUTOS -->
                 <?php if ($secao === 'produtos'): ?>
                     <h2>Produtos</h2>
                     <button class="btn-novo" onclick="window.location='produto_form.php'">
@@ -233,7 +233,6 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 <?php endif; ?>
 
 
-                <!-- PEDIDOS -->
                 <?php if ($secao === 'pedidos'): ?>
                     <h2>Pedidos</h2>
                     <hr>
@@ -264,18 +263,18 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                             <tbody>
                                 <?php foreach ($ped as $p): ?>
                                     <tr>
-                                        <td>#<?= $p['id_pedido'] ?></td>
-                                        <td><?= htmlspecialchars($p['nm_usuario']) ?></td>
-                                        <td><?= date('d/m/Y H:i', strtotime($p['dt_pedido'])) ?></td>
-                                        <td>R$ <?= number_format($p['vl_total'], 2, ',', '.') ?></td>
+                                        <td>#<?= htmlspecialchars($p['id_pedido']) ?></td>
+                                        <td><?= htmlspecialchars($p['nm_usuario']) ?></td> 
+                                        <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($p['dt_pedido']))) ?></td>
+                                        <td>R$ <?= htmlspecialchars(number_format($p['vl_total'], 2, ',', '.')) ?></td>
                                         <td>
-                                            <select onchange="alterarStatus(<?= $p['id_pedido'] ?>, this.value)">
+                                            <select onchange="alterarStatus(<?= htmlspecialchars($p['id_pedido']) ?>, this.value)">
                                                 <?php
                                                 $status = ['Pendente', 'Em andamento', 'A caminho', 'Concluído', 'Entregue', 'Cancelado'];
                                                 foreach ($status as $s):
                                                 ?>
-                                                    <option value="<?= $s ?>" <?= $p['status_pedido'] == $s ? 'selected' : '' ?>>
-                                                        <?= $s ?>
+                                                    <option value="<?= htmlspecialchars($s) ?>" <?= $p['status_pedido'] == $s ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($s) ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -283,7 +282,7 @@ $secao = $_GET['secao'] ?? 'estatisticas';
 
                                         <td>
                                             <button class="btnCancelar"
-                                                onclick="cancelarPedidoAdmin(<?= $p['id_pedido'] ?>)">
+                                                onclick="cancelarPedidoAdmin(<?= htmlspecialchars($p['id_pedido']) ?>)">
                                                 Cancelar
                                             </button>
                                         </td>
@@ -296,28 +295,25 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 <?php endif; ?>
 
 
-                <!-- GALERIA -->
                 <?php if ($secao === 'galeria'): ?>
                     <h2>Galeria</h2>
                     <p>⚠ Inserir galeria.</p>
                 <?php endif; ?>
 
 
-                <!-- FINANCEIRO -->
                 <?php if ($secao === 'financeiro'): ?>
                     <h2>Financeiro</h2>
                     <p>⚠ Relatórios financeiros.</p>
                 <?php endif; ?>
 
 
-                <!-- CLIENTES -->
                 <?php if ($secao === 'clientes'): ?>
                     <h2>Clientes</h2>
+                    <a href="users.php">Gerenciar</a>
                     <p>⚠ Listagem de clientes aqui.</p>
                 <?php endif; ?>
 
 
-                <!-- CONFIGURAÇÕES -->
                 <?php if ($secao === 'config'): ?>
                     <div class="configuracoes">
                         <div class="info-adm">
@@ -325,36 +321,38 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                                 <h3>Meu perfil</h3>
                                 <div class="foto-ajuste">
                                     <div class="foto_upload">
-                                        <canvas> {/* tirar quando puxar uma imagem de fato */}</canvas>
+                                       <img src="<?= $foto_admin ?>" alt="Foto do Administrador" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                     </div>
-                                    <button class="editar-foto" style="border-radius: 50px; padding: 20px">
-                                        <i class="fa-solid fa-camera"></i>
-                                    </button>
+                                    <input type="file" id="inputFotoAdmin" accept="image/*" style="display: none;">
+
+                                    <button class="editar-foto" onclick="document.getElementById('inputFotoAdmin').click();" style="border-radius: 50px; padding: 20px">
+                                     <i class="fa-solid fa-camera"></i>
+                                     </button>
                                 </div>
-                                <p>Nome de usuário aqui</p>
-                                <small>cpf 000000000000</small>
+                                <p><?= $nome_admin ?></p> 
+                                <small>cpf <?= $cpf_admin ?></small>
                                 <button>Sair</button>
                             </div>
                             <div class="layout-form">
-                                <form action="" method="post" class="form-editar">
+                               <form action="#" method="post" class="form-editar" enctype="multipart/form-data">
                                     <h3>Informações</h3>
                                     <div>
                                         <label htmlFor="nome_completo">Nome completo:</label>
-                                        <input type="text" name="nome_completo" id="" deac />
+                                        <input type="text" name="nome_completo" id="" value="<?= $nome_admin ?>" />
                                     </div>
                                     <div style={{display: "grid", gridTemplateColumns: "4fr 1fr", gap: "10px"}}>
                                         <div>
                                             <label htmlFor="email">E-mail:</label>
-                                            <input type="email" name="email" id=""/>
+                                            <input type="email" name="email" id="" value="<?= $email_admin ?>"/>
                                         </div>
                                         <div>
                                             <label htmlFor="">Data de nascimento</label>
-                                            <input type="date" name="data_nascimento" id=""/>
+                                            <input type="date" name="data_nascimento" id="" value="<?= $data_nascimento_admin ?>"/>
                                         </div>
                                     </div>
                                     <div>
                                         <label htmlFor="telefone">Telefone:</label>
-                                        <input type="tel" name="telefone" id=""/>
+                                        <input type="tel" name="telefone" id="" value="<?= $telefone_admin ?>"/>
                                     </div>
                                     <input type="submit" value="Editar informações" />
                                 </form>
@@ -370,7 +368,6 @@ $secao = $_GET['secao'] ?? 'estatisticas';
     </div>
     <?php include 'footer.php'; ?>
 
-    <!-- MODAL CRIAR PEDIDO -->
     <div id="modalCriarPedido" class="modalPedido">
         <div class="modalConteudo">
 
@@ -384,7 +381,7 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 $clientes = $pdo->query("SELECT id_usuario, nm_usuario FROM usuario ORDER BY nm_usuario")->fetchAll();
                 foreach ($clientes as $c):
                 ?>
-                    <option value="<?= $c['id_usuario'] ?>"><?= $c['nm_usuario'] ?></option>
+                    <option value="<?= htmlspecialchars($c['id_usuario']) ?>"><?= htmlspecialchars($c['nm_usuario']) ?></option>
                 <?php endforeach; ?>
             </select>
 
@@ -397,11 +394,11 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                 ?>
                     <div class="prodItem">
 
-                        <input type="checkbox" class="checkProduto" value="<?= $prod['id_produto'] ?>"
-                            data-tipo="<?= $prod['tipo'] ?>">
-                        <label><?= $prod['nm_produto'] ?> - R$ <?= $prod['preco'] ?></label>
+                        <input type="checkbox" class="checkProduto" value="<?= htmlspecialchars($prod['id_produto']) ?>"
+                            data-tipo="<?= htmlspecialchars($prod['tipo']) ?>">
+                        <label><?= htmlspecialchars($prod['nm_produto']) ?> - R$ <?= htmlspecialchars($prod['preco']) ?></label>
 
-                        <div class="inputs-extra" id="extra<?= $prod['id_produto'] ?>" style="display:none;">
+                        <div class="inputs-extra" id="extra<?= htmlspecialchars($prod['id_produto']) ?>" style="display:none;">
                             <input type="text" placeholder="Cor (opcional)" class="corPed">
                             <input type="text" placeholder="Personagem (opcional)" class="personPed">
                         </div>

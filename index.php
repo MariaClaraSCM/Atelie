@@ -68,7 +68,7 @@ $testemonials = [
     </section>
 
     <!-- POR QUE ESCOLHER -->
-    <section class="why-choose-us">
+    <section class="why-choose-us" id="porque_escolher">
       <h1>Por que escolher nosso ateliê?</h1>
       <p>Porque entregamos qualidade e confiança com carinho, feito especialmente para você.</p>
       <div class="motives">

@@ -2,7 +2,7 @@
 session_start();
 require 'config.php';
 
-// ======================= AUTENTICAÇÃO =======================
+
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     header('Location: login.php');
     exit;
@@ -75,12 +75,10 @@ $query_ped->execute([$id_usuario]);
 $pedidos = $query_ped->fetchAll(PDO::FETCH_ASSOC);
 
 
-// ======================= FILTROS DE STATUS ===================
 
-// Status ATIVOS no seu banco:
 $STATUS_ATIVOS = ['Pendente', 'Em andamento', 'A caminho'];
 
-// Status HISTÓRICO no seu banco:
+
 $STATUS_HISTORICO = ['Concluído', 'Entregue', 'Cancelado'];
 
 $pedidos_ativos = array_filter($pedidos, function ($p) use ($STATUS_ATIVOS) {
@@ -94,7 +92,7 @@ $historico = array_filter($pedidos, function ($p) use ($STATUS_HISTORICO) {
 $total_favoritos = count($favoritos);
 $total_pedidos   = count($pedidos);
 
-// Seção selecionada no dashboard
+
 $selectedSection = $_GET['section'] ?? 'conta';
 ?>
 
@@ -113,6 +111,32 @@ $selectedSection = $_GET['section'] ?? 'conta';
 
 <body>
     <?php include 'header.php'; ?>
+   
+    <?php
+    if (isset($_GET['status'])) {
+        $status = $_GET['status'];
+        $msg = $_GET['msg'] ?? '';
+        
+        $mensagem = '';
+        $style = '';
+
+        if ($status === 'sucesso') {
+            $mensagem = '✅ Sucesso! Seus dados foram atualizados.';
+            $style = 'background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;'; // Verde
+        } elseif ($status === 'erro') {
+            $mensagem = '❌ Erro ao atualizar os dados. Detalhe: ' . htmlspecialchars(urldecode($msg));
+            $style = 'background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;'; // Vermelho
+        } elseif ($status === 'aviso') {
+            $mensagem = '⚠️ Aviso: ' . htmlspecialchars(urldecode($msg));
+            $style = 'background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;'; // Amarelo
+        }
+        
+        if (!empty($mensagem)) {
+            echo '<div style="' . $style . 'padding: 10px; margin: 10px auto; width: 90%; max-width: 900px; border-radius: 5px; text-align: center;">' . $mensagem . '</div>';
+        }
+    }
+    ?>
+    <div class="userpage-container">
 
     <div class="userpage-container">
         <div class="ajustepage">
