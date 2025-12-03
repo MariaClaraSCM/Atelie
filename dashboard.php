@@ -22,6 +22,7 @@ $foto_admin = $_SESSION['foto'] ?? "images/users/default.png";
 $total_avaliacoes = $pdo->query("SELECT COUNT(*) FROM avaliacao")->fetchColumn();
 $total_produtos   = $pdo->query("SELECT COUNT(*) FROM produto")->fetchColumn();
 $total_usuarios   = $pdo->query("SELECT COUNT(*) FROM usuario")->fetchColumn();
+$total_pedidos = $pdo->query("SELECT COUNT(*) FROM pedido")->fetchColumn();
 
 // Seção atual
 $secao = $_GET['secao'] ?? 'estatisticas';
@@ -33,9 +34,18 @@ $secao = $_GET['secao'] ?? 'estatisticas';
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Admin</title>
-
-    <link rel="stylesheet" href="./assets/styles/dashboard.css">
+    <!-- Fav icon  -->
+    <link rel="icon" type="image/svg+xml" href="./assets/imagotipo.svg" sizes="any" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Fontes do site: Inter, sans-serif e Instrument Serif, serif -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- Ícones: Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./assets/styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 
@@ -69,15 +79,15 @@ $secao = $_GET['secao'] ?? 'estatisticas';
                     <span class="links">Pedidos</span>
                 </li>
 
-                <li onclick="window.location='?secao=galeria'">
+                <!-- <li onclick="window.location='?secao=galeria'">
                     <i class="fa-solid fa-image icon"></i>
                     <span class="links">Galeria</span>
-                </li>
+                </li> -->
 
-                <li onclick="window.location='?secao=financeiro'">
+                <!-- <li onclick="window.location='?secao=financeiro'">
                     <i class="fa-solid fa-coins icon"></i>
                     <span class="links">Financeiro</span>
-                </li>
+                </li> -->
 
                 <li onclick="window.location='?secao=clientes'">
                     <i class="fa-solid fa-users icon"></i>
@@ -100,14 +110,14 @@ $secao = $_GET['secao'] ?? 'estatisticas';
             <header class="header">
                 <h3>Bem-vinda, <?= htmlspecialchars($nome_admin) ?>!</h3>
 
-                <a href="index.php">Home</a>
-
+                <div style="display: flex; gap: 25px; align-items:center">   
                 <button class="btn-novo" onclick="abrirCriarPedido()">
                     <i class="fa-solid fa-plus"></i>
                     Novo Pedido
                 </button>
-
-                <a href="logout.php" class="btn-logout">Sair</a>
+                    <a href="index.php">Home</a>
+                    <a href="logout.php" class="btn-logout">Sair</a>
+                </div>
             </header>
 
             <!-- ÁREA DOS CARDS / COMPONENTES -->
@@ -115,27 +125,93 @@ $secao = $_GET['secao'] ?? 'estatisticas';
 
                 <!-- ESTATÍSTICAS -->
                 <?php if ($secao === 'estatisticas'): ?>
-                    <div class="cards-grid">
+                    <section class="dashboard-estatisticas">
 
+                        <div class="cards-grid">
+                            
                         <div class="card-item">
-                            <h2>Avaliações</h2>
-                            <p class="valor"><?= $total_avaliacoes ?></p>
+                            <h3>Avaliações</h3>
+                            <p class="valor"><?= $total_avaliacoes ?></p> 
+                            <!-- TROCAR AQUI A PARTE DE AVALIAÇÕES? -->
                             <a href="avaliaadmin.php">Gerenciar</a>
                         </div>
-
+                        
                         <div class="card-item">
-                            <h2>Produtos</h2>
+                            <h3>Produtos</h3>
                             <p class="valor"><?= $total_produtos ?></p>
-                            <a href="servicos.php">Gerenciar</a>
+                            <a href="dashboard.php?secao=produtos">Gerenciar</a>
                         </div>
 
                         <div class="card-item">
-                            <h2>Usuários</h2>
+                            <h3>Pedidos</h3>
+                            <p class="valor"><?= $total_produtos ?></p>
+                            <a href="dashboard.php?secao=produtos">Gerenciar</a>
+                        </div>
+
+                        <div class="card-item">
+                            <h3>Usuários</h3>
                             <p class="valor"><?= $total_usuarios ?></p>
                             <a href="users.php">Gerenciar</a>
                         </div>
 
                     </div>
+                        <div class="quickActions">
+                            <h3>Ações Rápidas</h3>
+                            <div class="actions">
+                                
+                                <button class="card-acao" onclick="window.location='?secao=categorias'">
+                                    <i class="fa-solid fa-tag"></i>
+                                    <span>Adicionar Categoria</span>
+                                </button>
+                                <button class="card-acao" onclick="window.location='?secao=produtos'">
+                                    <i class="fa-solid fa-box"></i>
+                                    <span>Adicionar Produto</span>
+                                </button>
+                                <button class="card-acao" onclick="window.location='?secao=pedidos'">
+                                    <i class="fa-solid fa-receipt"></i>
+                                    <span>Adicionar Pedido</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="quickActions">
+                            <div class="header-pedidos">
+                                <h3>Pedidos Recentes</h3>
+                                <a href="dashboard.php?secao=pedidos">Ver Mais</a>
+                            </div>
+                            <div class="lista-pedidos">
+                                <div class="pedido">
+                                    <!-- <img id="foto-cliente" src="" alt=""> -->
+                                     <!-- uso o canvas pra testar o tamanho da foto quando não puxa, troque pela img -->
+                                    <div style="display: flex; gap: 10px;">
+                                        <canvas id="foto-cliente"></canvas>
+                                        <div>
+                                            <!-- favor colocar margin 0 quando puxar os clientes em lista -->
+                                            <p style="margin: 0;">Nome do produto</p>
+                                            <span>Nome do cliente que pediu</span>
+                                        </div>
+                                    </div>
+                                    <div class="status-pedido">
+                                        <span>Status do pedido</span>
+                                    </div>
+                                </div>
+                                <div class="pedido">
+                                    <!-- <img id="foto-cliente" src="" alt=""> -->
+                                     <!-- uso o canvas pra testar o tamanho da foto quando não puxa, troque pela img -->
+                                    <div style="display: flex; gap: 10px;">
+                                        <canvas id="foto-cliente"></canvas>
+                                        <div>
+                                            <!-- favor colocar margin 0 quando puxar os clientes em lista -->
+                                            <p style="margin: 0;">Nome do produto</p>
+                                            <span>Nome do cliente que pediu</span>
+                                        </div>
+                                    </div>
+                                    <div class="status-pedido">
+                                        <span>Status do pedido</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 <?php endif; ?>
 
 
@@ -243,8 +319,48 @@ $secao = $_GET['secao'] ?? 'estatisticas';
 
                 <!-- CONFIGURAÇÕES -->
                 <?php if ($secao === 'config'): ?>
-                    <h2>Configurações</h2>
-                    <p>⚠ Área de Configurações.</p>
+                    <div class="configuracoes">
+                        <div class="info-adm">
+                            <div class="layout">
+                                <h3>Meu perfil</h3>
+                                <div class="foto-ajuste">
+                                    <div class="foto_upload">
+                                        <canvas> {/* tirar quando puxar uma imagem de fato */}</canvas>
+                                    </div>
+                                    <button class="editar-foto" style="border-radius: 50px; padding: 20px">
+                                        <i class="fa-solid fa-camera"></i>
+                                    </button>
+                                </div>
+                                <p>Nome de usuário aqui</p>
+                                <small>cpf 000000000000</small>
+                                <button>Sair</button>
+                            </div>
+                            <div class="layout-form">
+                                <form action="" method="post" class="form-editar">
+                                    <h3>Informações</h3>
+                                    <div>
+                                        <label htmlFor="nome_completo">Nome completo:</label>
+                                        <input type="text" name="nome_completo" id="" deac />
+                                    </div>
+                                    <div style={{display: "grid", gridTemplateColumns: "4fr 1fr", gap: "10px"}}>
+                                        <div>
+                                            <label htmlFor="email">E-mail:</label>
+                                            <input type="email" name="email" id=""/>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="">Data de nascimento</label>
+                                            <input type="date" name="data_nascimento" id=""/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="telefone">Telefone:</label>
+                                        <input type="tel" name="telefone" id=""/>
+                                    </div>
+                                    <input type="submit" value="Editar informações" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 <?php endif; ?>
 
             </section>

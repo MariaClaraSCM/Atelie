@@ -98,6 +98,6 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </table>
 </div>
 
-    <?php include 'footer.php'; ?>
+    <!-- <?php include 'footer.php'; ?> -->
 </body>
 </html>
