@@ -25,7 +25,7 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
         <ul>
             <li><button onclick="window.location.href='index.php'">Home</button></li>
             <li><button onclick="window.location.href='produtosPedir.php'">Produtos</button></li>
-            <li><button onclick="window.location.href='sobre.php'">Sobre</button></li>
+            <li><button onclick="window.location.href='index.php#porque_escolher'">Sobre</button></li>
             <li><button onclick="window.location.href='contato.php'">Contato</button></li>
         </ul>
     </div>
