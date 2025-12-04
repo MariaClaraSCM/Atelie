@@ -1,5 +1,10 @@
 <?php
 require 'config.php';
+session_start(); //para pegar o id do usuario 
+$query1 = $pdo->prepare('select id_carrinho from carrinho where id_usuario = ?');
+$query1->execute([$_SESSION['id_usuario']]);
+$resultado = $query1->fetch(PDO::FETCH_ASSOC);
+$id_carrinho = $resultado ? $resultado['id_carrinho'] : 'null';
 
 // Buscar produtos
 $sql = "SELECT p.*, c.nm_categoria 
@@ -139,7 +144,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                         <h2 id="modalNome"></h2>
                         <p id="modalDescricao"></p>
                     </div>
-                        
+
                     <!-- <input type="number" id="modalQuantidade" min="1" value="1"> -->
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label>Quantidade:</label>
@@ -149,11 +154,19 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                             <button class="btn-number" data-type="plus"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
-                    
+
                     <p>Valor unitário: <span id="modalPreco"></span></p>
                     <p>Valor total: <span id="modalPrecoTotal"></span></p>
                     <div class="acoesModal">
                         <button id="btnPedirAgora" class="btnComprar">Pedir agora</button>
+                        <!-- PARA ENVIAR AS INFORMAÇÕES PRO POST DE ADD NO CARRINHO!!! -->
+
+                        <input type="hidden" id="id_carrinho" name="id_carrinho">
+                        <input type="hidden" id="id_produto" name="id_produto">
+                        <input type="hidden" id="quantidade" name="quantidade">
+                        <input type="hidden" id="cor_item" name="cor_item">
+                        <input type="hidden" id="nm_personagem" name="nm_personagem">
+
                         <button id="btnCarrinho" class="btnCarrinho">Adicionar ao carrinho</button>
                     </div>
                 </div>
@@ -201,6 +214,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
     </main>
 
     <script>
+        let iscarrinho = false;
         let produtoAtual = null;
 
         function formatarReal(valor) {
@@ -218,7 +232,8 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
             document.getElementById("modalNome").textContent = p.nm_produto;
             document.getElementById("modalPreco").textContent = formatarReal(p.preco);
             document.getElementById("modalDescricao").textContent = p.descricao;
-
+            document.getElementById("id_produto").value = p.id_produto; //hiddem p pegar no form do post do item_carrinho
+            document.getElementById("id_carrinho").value = <?php echo $id_carrinho ?? 0 ?>; //hidden tmb
             const qtd = document.getElementById("modalQuantidade");
             qtd.value = 1;
 
@@ -244,6 +259,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                 input.value = current;
                 const total = Number(produtoAtual.preco) * current;
                 document.getElementById("modalPrecoTotal").textContent = formatarReal(total);
+                document.getElementById("quantidade").value = current;
             });
         });
 
@@ -261,6 +277,41 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
             }
         };
 
+        //BOTAO PRA ADD CARRINHOWWWWWWWW  ENCOMENDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        document.getElementById("btnCarrinho").onclick = () => {
+            if (produtoAtual.tipo === "Encomenda") {
+                fecharModalProduto();
+                document.getElementById("modalEncomenda").style.display = "flex";
+                iscarrinho = true;
+            } else {
+                // PRONTA ENTREGA: Fetch direto (sem recarregar)
+                console.log("Aqui: " + document.getElementById("quantidade").value);
+                const dados = {
+                    id_carrinho: document.getElementById("id_carrinho").value,
+                    id_produto: document.getElementById("id_produto").value,
+                    quantidade: document.getElementById("quantidade").value,
+                    cor_item: null,
+                    nm_personagem: null
+                };
+                fetch('adicionarCarrinho.php', {
+                        method: 'POST',
+                        body: new URLSearchParams(dados)
+                    })
+                    .then(resposta => resposta.json()) // ← Converte resposta do PHP
+                    .then(resultado => {
+                        if (resultado.success) { // VERIFICA se PHP disse que deu certo via chave success!!!!!
+                            alert('✅ Adicionado ao carrinho!');
+                            fecharModalProduto();
+                        } else {
+                            alert('❌ Erro: ' + resultado.message);
+                        }
+                    })
+                    .catch(erro => {
+                        alert('❌ Erro de conexão');
+                    });
+            }
+        };
+
         function fecharModalEncomenda() {
             document.getElementById("modalEncomenda").style.display = "none";
         }
@@ -268,7 +319,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
         // FUNÇÃO ÚNICA PARA CRIAR O PEDIDO NO BANCO
         async function criarPedido(tipo) {
             const quantidade = document.getElementById("modalQuantidade").value;
-
+            console.log("Aqui: " + quantidade);
             const dados = {
                 id_produto: produtoAtual.id_produto,
                 quantidade: quantidade,
@@ -299,9 +350,37 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
 
         // ENCOMENDA
         async function confirmarEncomenda() {
-            criarPedido("Encomenda");
-        }
+            if (iscarrinho === true) {
+                const dados = {
+                    id_carrinho: document.getElementById("id_carrinho").value,
+                    id_produto: document.getElementById("id_produto").value,
+                    quantidade: document.getElementById("quantidade").value,
+                    cor_item: document.getElementById("corBolsa").value || null,
+                    nm_personagem: document.getElementById("nomePersonagem").value || null
+                }
+                fetch('adicionarCarrinho.php', {
+                        method: 'POST',
+                        body: new URLSearchParams(dados) // envia como formData
+                    })
+                    .then(resposta => resposta.json()) // ← CONVERTE resposta do PHP
+                    .then(resultado => { // ← RECEBE o JSON convertido
+                        console.log("DEBUG: PHP retornou:", resultado); // Opcional: ver no console
 
+                        if (resultado.success) { // ← VERIFICA se deu certo
+                            alert('✅ Adicionado ao carrinho!');
+                            fecharModalProduto();
+                        } else {
+                            alert('❌ Erro: ' + (resultado.message || 'Erro desconhecido'));
+                        }
+                    })
+                    .catch(erro => {
+                        console.error("Erro no fetch:", erro);
+                        alert('❌ Erro de conexão com o servidor');
+                    });
+            } else { //VI no gpt msm, tava cansado véi
+                criarPedido("Encomenda");
+            }
+        }
     </script>
 
 
