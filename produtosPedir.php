@@ -154,7 +154,12 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                             <button class="btn-number" data-type="plus"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
-
+                    <div>
+                        <p>Tamanho: <span id="produtoTamanho"></span></p>
+                    </div>
+                    <div>
+                        <p>Produto: <span id="produtoTipo"></span></p>
+                    </div>
                     <p>Valor unitário: <span id="modalPreco"></span></p>
                     <p>Valor total: <span id="modalPrecoTotal"></span></p>
                     <div class="acoesModal">
@@ -232,6 +237,8 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
             document.getElementById("modalNome").textContent = p.nm_produto;
             document.getElementById("modalPreco").textContent = formatarReal(p.preco);
             document.getElementById("modalDescricao").textContent = p.descricao;
+            document.getElementById("produtoTamanho").textContent = p.qt_tamanho;
+            document.getElementById("produtoTipo").textContent = p.tipo;
             document.getElementById("id_produto").value = p.id_produto; //hiddem p pegar no form do post do item_carrinho
             document.getElementById("id_carrinho").value = <?php echo $id_carrinho ?? 0 ?>; //hidden tmb
             const qtd = document.getElementById("modalQuantidade");
@@ -354,7 +361,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                 const dados = {
                     id_carrinho: document.getElementById("id_carrinho").value,
                     id_produto: document.getElementById("id_produto").value,
-                    quantidade: document.getElementById("quantidade").value,
+                    quantidade: document.getElementById("modalQuantidade").value,
                     cor_item: document.getElementById("corBolsa").value || null,
                     nm_personagem: document.getElementById("nomePersonagem").value || null
                 }

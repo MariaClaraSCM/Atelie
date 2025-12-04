@@ -1,8 +1,10 @@
 <?php
+require "config.php";
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+$id_usuario    = $_SESSION['id_usuario'] ?? 0;
 $logado        = $_SESSION['logado'] ?? false;
 $nome_usuario  = $_SESSION['nm_usuario'] ?? '';
 $tipo_usuario  = $_SESSION['tipo'] ?? '';
@@ -15,6 +17,30 @@ if (!file_exists($caminho_foto)) {
 }
 
 $nome_primeiro = explode(" ", $nome_usuario)[0];
+
+$query_id = $pdo->prepare("SELECT id_carrinho FROM carrinho WHERE id_usuario = ?");
+$query_id->execute([$id_usuario]);
+$id_carrinho = $query_id->fetchColumn();
+
+if (!$id_carrinho) {
+    echo "Usuário não possui carrinho";
+    exit;
+}
+
+$query = $pdo->prepare("
+    SELECT 
+        ic.id_item_carrinho,
+        ic.quantidade,
+        p.id_produto,
+        p.nm_produto,
+        p.preco,
+        p.foto_produto
+    FROM item_carrinho ic
+    JOIN produto p ON p.id_produto = ic.id_produto
+    WHERE ic.id_carrinho = ?
+");
+$query->execute([$id_carrinho]);
+$itens = $query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <header>
     <div class="ajustepicture">
@@ -86,8 +112,58 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
 
         <div id="listaCarrinho" class="lista-carrinho">
             <!-- Produtos serão carregados aqui via AJAX -->
-        </div>
+             <div class="lista-itens">
+                <?php
+                $valorTotalPedido = 0;
+                foreach ($itens as $item) {
+                    $valorTotalProduto = $item['preco'] * $item['quantidade'];
+                    $valorTotalPedido += $valorTotalProduto;
+                    $foto = $item['foto_produto'] ?: "https://abd.org.br/wp-content/uploads/2023/09/placeholder-284.png"; // foto/sem foto
+                    echo '
+                        <div class="item-carrinho">
+                            <div class="img-nome">
+                                <img class="img-item-carrinho" src="' . $foto . '">
+                                <p class="nome-produto">' . $item['nm_produto'] . '</p>
+                            </div>
+                            <p class="preco-total">R$ ' . number_format($valorTotalProduto, 2, ",", ".") . '</p>
+                        </div>
+                    ';
+                }
+                ?>
+                </div>
+                <div class="lista-itens" style="gap: 5px;">
+                    <?php echo 'Valor Total: R$ ' . number_format($valorTotalPedido, 2, ",", ".");?>
+                    <!-- puxei a mesma classe só pra usar a estilização -->
+                    <button class="btnVerMais">Efetuar Pedido</button>
+                </div>
+            <!-- Produtos serão carregados aqui via AJAX -->
+             <style>
+                .lista-itens {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
+                .item-carrinho {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                .img-nome {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                    align-items: center;
+                }
 
+                .img-item-carrinho {
+                    width: 32px;
+                    height: 32px;
+                    object-fit: cover;
+                }
+             </style>
+        </div>
     </div>
 </div>
 
@@ -277,6 +353,12 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
         transition: 0.4s;
         z-index: 9999;
     }
+    
+    .carrinho-modal:hover {
+        background: #fff;
+        box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
+        color: black;
+    }
 
     .carrinho-modal.ativo {
         right: 0;
@@ -302,6 +384,10 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
     /* Lista */
     .lista-carrinho {
         margin-top: 40px;
+        display:flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 80%;
     }
 
     .item-carrinho {
