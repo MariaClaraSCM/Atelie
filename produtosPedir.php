@@ -37,6 +37,7 @@ $currentPage = max(1, min($currentPage, $totalPaginas));
 
 $inicio = ($currentPage - 1) * $produtosPorPagina;
 $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -119,6 +120,9 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                     </div>
 
                     <div class="acoesAdm">
+                        <button class="btnFav" data-id="<?= $p['id_produto'] ?>">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
                         <button class="btnVerProduto"
                             onclick='abrirModalProduto(<?= json_encode($p) ?>)'>
                             Ver produto
@@ -215,7 +219,7 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                 </a>
             <?php endfor; ?>
         </div>
-
+        <?php include "footer.php"?>
     </main>
 
     <script>
@@ -241,6 +245,8 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
             document.getElementById("produtoTipo").textContent = p.tipo;
             document.getElementById("id_produto").value = p.id_produto; //hiddem p pegar no form do post do item_carrinho
             document.getElementById("id_carrinho").value = <?php echo $id_carrinho ?? 0 ?>; //hidden tmb
+            //isso daqui n pega fio
+
             const qtd = document.getElementById("modalQuantidade");
             qtd.value = 1;
 
@@ -283,6 +289,43 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                 criarPedido("Pronta entrega");
             }
         };
+
+        // AQUI O FAVORITAR QUE N TÁ PEGANDO
+        
+        document.querySelectorAll(".btnFav").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id_produto = btn.dataset.id;
+
+                // Envia requisição para favoritar.php
+                try {
+                    const resp = await fetch("favoritar.php", {
+                        method: "POST",
+                        body: new URLSearchParams({ id_produto })
+                    });
+
+                    const data = await resp.json();
+
+                    if (!data.ok) {
+                        alert(data.message || "Você precisa estar logado para favoritar!");
+                        return;
+                    }
+
+                    // Atualiza o ícone do coração
+                    const icon = btn.querySelector("i");
+                    if (data.favorito) {
+                        icon.classList.remove("fa-regular");
+                        icon.classList.add("fa-solid");
+                    } else {
+                        icon.classList.remove("fa-solid");
+                        icon.classList.add("fa-regular");
+                    }
+
+                } catch (err) {
+                    alert("Erro ao conectar com o servidor");
+                    console.error(err);
+                }
+            });
+        });
 
         //BOTAO PRA ADD CARRINHOWWWWWWWW  ENCOMENDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         document.getElementById("btnCarrinho").onclick = () => {
@@ -388,6 +431,8 @@ $produtosAtuais = array_slice($produtos, $inicio, $produtosPorPagina);
                 criarPedido("Encomenda");
             }
         }
+        
+
     </script>
 
 

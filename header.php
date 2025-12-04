@@ -4,11 +4,38 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$id_usuario    = $_SESSION['id_usuario'] ?? 0;
 $logado        = $_SESSION['logado'] ?? false;
 $nome_usuario  = $_SESSION['nm_usuario'] ?? '';
 $tipo_usuario  = $_SESSION['tipo'] ?? '';
 $foto_usuario  = $_SESSION['foto'] ?? 'default.png';
+
+if (!isset($_SESSION['id_usuario'])) {
+    $_SESSION['id_usuario'] = null;
+
+    // echo '
+    // <div class="aviso-sem-conta">
+    //     Você não está cadastrado.
+    //     <a href="login.php">Faça login</a>
+    // </div>
+
+    // <style>
+    //     .aviso-sem-conta {
+    //         width: 100%;
+    //         background: #ffe5ea;
+    //         color: #b40039;
+    //         padding: 10px 15px;
+    //         border-radius: 6px;
+    //         font-size: 14px;
+    //         // border-left: 4px solid #b40039;
+    //         font-weight: 500;
+    //         z-index: 999999;
+    //     }
+    // </style>
+    // ';
+    // return;
+}
+
+$id_usuario = $logado ? ($_SESSION['id_usuario'] ?? 0) : 0;
 
 // Caminho da imagem
 $caminho_foto = "images/users/" . $foto_usuario;
@@ -21,11 +48,6 @@ $nome_primeiro = explode(" ", $nome_usuario)[0];
 $query_id = $pdo->prepare("SELECT id_carrinho FROM carrinho WHERE id_usuario = ?");
 $query_id->execute([$id_usuario]);
 $id_carrinho = $query_id->fetchColumn();
-
-if (!$id_carrinho) {
-    echo "Usuário não possui carrinho";
-    exit;
-}
 
 $query = $pdo->prepare("
     SELECT 
@@ -55,7 +77,6 @@ $itens = $query->fetchAll(PDO::FETCH_ASSOC);
             <li><button onclick="window.location.href='contato.php'">Contato</button></li>
         </ul>
     </div>
-
     <nav class="ajusteNav">
 
         <div class="procurar">
@@ -134,40 +155,76 @@ $itens = $query->fetchAll(PDO::FETCH_ASSOC);
                 <div class="lista-itens" style="gap: 5px;">
                     <?php echo 'Valor Total: R$ ' . number_format($valorTotalPedido, 2, ",", ".");?>
                     <!-- puxei a mesma classe só pra usar a estilização -->
-                    <button class="btnVerMais">Efetuar Pedido</button>
+                    <button class="btnVerMais" onclick="abrirModal('modalNotaFiscal')"">Efetuar Pedido</button>
                 </div>
             <!-- Produtos serão carregados aqui via AJAX -->
-             <style>
-                .lista-itens {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                }
-                .item-carrinho {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-                
-                .img-nome {
-                    display: flex;
-                    flex-direction: row;
-                    gap: 10px;
-                    align-items: center;
-                }
-
-                .img-item-carrinho {
-                    width: 32px;
-                    height: 32px;
-                    object-fit: cover;
-                }
-             </style>
         </div>
+    </div>
+</div>
+<!-- MODAL 1: Nota Fiscal / Resumo do Carrinho -->
+<div id="modalNotaFiscal" class="modal" style="display:none;">
+    <div class="modal-conteudo">
+        <h2>Resumo do Carrinho</h2>
+        <div id="itensNotaFiscal">
+            <!-- Aqui serão listados os produtos do carrinho -->
+        </div>
+        <p><b>Valor total:</b> <span id="valorTotalNotaFiscal">R$ 0,00</span></p>
+        <div class="acoesModal">
+            <button id="btnConfirmarNota" class="btnComprar">Confirmar</button>
+        </div>
+        <button class="btnFechar" onclick="fecharModal('modalNotaFiscal')">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+</div>
+<!-- MODAL 2: Endereço -->
+<div id="modalEndereco" class="modal" style="display:none;">
+    <div class="modal-conteudo">
+        <h2>Informe o Endereço</h2>
+        <label>Rua:</label>
+        <input type="text" id="ruaEndereco" placeholder="Rua">
+        <label>Número:</label>
+        <input type="text" id="numeroEndereco" placeholder="Número">
+        <label>Cidade:</label>
+        <input type="text" id="cidadeEndereco" placeholder="Cidade">
+        <label>CEP:</label>
+        <input type="text" id="cepEndereco" placeholder="CEP">
+        <div class="acoesModal">
+            <button id="btnConfirmarEndereco" class="btnComprar">Confirmar</button>
+        </div>
+        <button class="btnFechar" onclick="fecharModal('modalEndereco')">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+</div>
+
+<!-- MODAL 3: Confirmação Final -->
+<div id="modalConfirmacao" class="modal" style="display:none;">
+    <div class="modal-conteudo">
+        <h2>Confirmação do Pedido</h2>
+        <p><b>Quantidade:</b> <span id="quantidadeFinal"></span></p>
+        <p><b>Endereço:</b> <span id="enderecoFinal"></span></p>
+        <p><b>Valor total:</b> <span id="valorFinal"></span></p>
+        <p><b>Método de pagamento:</b></p>
+        <div class="metodosPagamento">
+            <button class="btnPagamento" data-pag="Cartão">Cartão</button>
+            <button class="btnPagamento" data-pag="Pix">Pix</button>
+            <button class="btnPagamento" data-pag="Dinheiro">Dinheiro</button>
+        </div>
+        <div class="acoesModal">
+            <button id="btnFinalizarPedido" class="btnComprar" onclick="abrirNotaFiscal()">Finalizar Pedido</button>
+        </div>
+        <button class="btnFechar" onclick="fecharModal('modalConfirmacao')">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 </div>
 
 <script>
+    function formatarReal(valor) {
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     function abrirCarrinho() {
         document.getElementById("modalCarrinho").classList.add("ativo");
         carregarCarrinho();
@@ -209,6 +266,57 @@ $itens = $query->fetchAll(PDO::FETCH_ASSOC);
 
         document.getElementById("listaCarrinho").innerHTML = html;
     }
+    let carrinho = <?php echo json_encode($itens); ?>;
+
+    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; 
+        fecharCarrinho();
+    }
+    function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    document.getElementById('btnConfirmarNota').onclick = () => {
+        fecharModal('modalNotaFiscal');
+        abrirModal('modalEndereco');
+    };
+
+
+    function preencherNotaFiscal() {
+        const container = document.getElementById('itensNotaFiscal');
+        container.innerHTML = '';
+        let total = 0;
+        carrinho.forEach(item => {
+            total += item.quantidade * item.preco;
+            const div = document.createElement('div');
+            div.textContent = `${item.nome} - ${item.quantidade} x ${formatarReal(item.preco)} = ${formatarReal(item.quantidade * item.preco)}`;
+            container.appendChild(div);
+        });
+        document.getElementById('valorTotalNotaFiscal').textContent = formatarReal(total);
+    }
+
+
+    document.getElementById('btnConfirmarEndereco').onclick = () => {
+        fecharModal('modalEndereco');
+        const rua = document.getElementById('ruaEndereco').value;
+        const numero = document.getElementById('numeroEndereco').value;
+        const cidade = document.getElementById('cidadeEndereco').value;
+        const cep = document.getElementById('cepEndereco').value;
+        document.getElementById('enderecoFinal').textContent = `${rua}, ${numero}, ${cidade}, CEP: ${cep}`;
+        let total = carrinho.reduce((acc, i) => acc + i.quantidade * i.preco, 0);
+        document.getElementById('valorFinal').textContent = formatarReal(total);
+        document.getElementById('quantidadeFinal').textContent = carrinho.reduce((acc,i)=>acc+i.quantidade,0);
+        abrirModal('modalConfirmacao');
+    };
+
+    document.querySelectorAll('.btnPagamento').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.btnPagamento').forEach(b=>b.style.background='#d62882');
+            btn.style.background = '#28a745';
+        });
+    });
+
+    document.getElementById('btnFinalizarPedido').onclick = () => {
+        alert('Pedido finalizado com sucesso!');
+        fecharModal('modalConfirmacao');
+    };
 </script>
 
 <style>
@@ -430,5 +538,83 @@ $itens = $query->fetchAll(PDO::FETCH_ASSOC);
         text-align: center;
         color: #777;
         margin-top: 20px;
+    }
+
+    .lista-itens {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .item-carrinho {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .img-nome {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .img-item-carrinho {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+    }
+    .modal {
+        position: fixed;
+        top:0; left:0; right:0; bottom:0;
+        background: rgba(0,0,0,0.6);
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        z-index:1000;
+    }
+    .modal-conteudo {
+        background:#fff;
+        padding:20px;
+        border-radius:8px;
+        width:90%;
+        max-width:500px;
+        position:relative;
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+    }
+    .btnFechar {
+        position:absolute;
+        top:10px;
+        right:10px;
+        background:none;
+        border:none;
+        font-size:20px;
+        cursor:pointer;
+    }
+    .acoesModal {
+        margin-top:10px;
+        display:flex;
+        justify-content:flex-end;
+        gap:8px;
+    }
+    .btnComprar, .btnPagamento {
+        padding:8px 16px;
+        border:none;
+        background:#d62882;
+        color:#fff;
+        border-radius:4px;
+        cursor:pointer;
+    }
+    .metodosPagamento {
+        display:flex;
+        gap:8px;
+    }
+
+    input {
+        padding: 5px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
     }
 </style>
